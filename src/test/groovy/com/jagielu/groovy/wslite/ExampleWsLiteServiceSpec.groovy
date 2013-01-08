@@ -1,5 +1,6 @@
 package com.jagielu.groovy.wslite
 
+import org.w3c.dom.Document
 import wslite.soap.SOAPClient
 
 class ExampleWsLiteServiceSpec extends BaseWsLiteSpec {
@@ -22,8 +23,8 @@ class ExampleWsLiteServiceSpec extends BaseWsLiteSpec {
 
         then:
             1 * client.send(_, _) >> { Map params, Closure requestBuilder ->
-                String xml = prepareAndParseXml(requestBuilder)
-                assertXpathEvaluatesTo("$year", '//ns:GetMothersDay/ns:year' , xml)
+                Document doc = buildAndParseXml(requestBuilder)
+                assertXpathEvaluatesTo("$year", '//ns:GetMothersDay/ns:year', doc)
                 return mockResponse(Responses.mothersDay)
             }
 

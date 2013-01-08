@@ -6,6 +6,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.custommonkey.xmlunit.XpathEngine
 import org.custommonkey.xmlunit.exceptions.XpathException
 import org.junit.Assert
+import org.w3c.dom.Document
 import spock.lang.Specification
 import wslite.soap.SOAPResponse
 
@@ -20,16 +21,15 @@ abstract class BaseWsLiteSpec extends Specification {
         engine.setNamespaceContext(new SimpleNamespaceContext(namespaces()))
     }
 
-    protected String prepareAndParseXml(Closure xmlBuilder) {
+    protected Document buildAndParseXml(Closure xmlBuilder) {
         def writer = new StringWriter()
         def builder = new MarkupBuilder(writer)
         builder.xml(xmlBuilder)
-        return writer.toString()
+        return XMLUnit.buildControlDocument(writer.toString())
     }
 
     protected void assertXpathEvaluatesTo(String expectedValue,
-                                          String xpathExpression, String xml) throws XpathException {
-        def doc = XMLUnit.buildControlDocument(xml)
+                                          String xpathExpression, Document doc) throws XpathException {
         Assert.assertEquals(expectedValue,
                 engine.evaluate(xpathExpression, doc))
     }
